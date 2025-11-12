@@ -1,0 +1,94 @@
+
+╔════════════════════════════════════════════════════════════════════════════════╗
+║           📚 REPORTE COMPLETO DE MATERIAS - INGENIERÍA EN SISTEMAS            ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+📊 ESTADÍSTICAS GENERALES:
+   • Total de materias: 53
+   • Total de créditos: 209
+   • Total horas teóricas: 142
+   • Total horas prácticas: 118
+   • Total horas: 260
+
+📋 MATERIAS POR SEMESTRE:
+─────────────────────────────────────────────────────────────────────────────────
+
+🔹 SEMESTRE 1 (5 materias | 19 cr | 16h T + 8h P):
+   • FIS100   | Física 1                                | 4 cr (3h T + 2h P)
+   • INF110   | Introducción a la Informática          | 4 cr (3h T + 2h P)
+   • INF119   | Estructuras Discretas                    | 4 cr (3h T + 2h P)
+   • LIN100   | Inglés Técnico 1                       | 2 cr (3h T + 0h P)
+   • MAT101   | Cálculo 1                               | 5 cr (4h T + 2h P)
+
+🔹 SEMESTRE 2 (5 materias | 19 cr | 15h T + 9h P):
+   • FIS102   | Física 2                                | 4 cr (3h T + 2h P)
+   • INF120   | Programación 1                          | 4 cr (2h T + 3h P)
+   • LIN101   | Inglés Técnico 2                       | 2 cr (3h T + 0h P)
+   • MAT102   | Cálculo 2                               | 5 cr (4h T + 2h P)
+   • MAT103   | Álgebra Lineal                          | 4 cr (3h T + 2h P)
+
+🔹 SEMESTRE 3 (5 materias | 19 cr | 14h T + 9h P):
+   • ADM100   | Administración                          | 3 cr (3h T + 0h P)
+   • FIS200   | Física 3                                | 4 cr (3h T + 2h P)
+   • INF210   | Programación 2                          | 4 cr (2h T + 3h P)
+   • INF211   | Arquitectura de Computadoras             | 4 cr (3h T + 2h P)
+   • MAT207   | Ecuaciones Diferenciales                 | 4 cr (3h T + 2h P)
+
+🔹 SEMESTRE 4 (5 materias | 19 cr | 13h T + 10h P):
+   • ADM200   | Contabilidad                             | 3 cr (3h T + 0h P)
+   • INF220   | Estructuras de Datos                     | 4 cr (2h T + 3h P)
+   • INF221   | Programación Ensamblador                | 4 cr (2h T + 3h P)
+   • MAT202   | Probabilidades y Estadística I          | 4 cr (3h T + 2h P)
+   • MAT205   | Métodos Numéricos                      | 4 cr (3h T + 2h P)
+
+🔹 SEMESTRE 5 (5 materias | 20 cr | 13h T + 12h P):
+   • INF310   | Estructura de Datos II                   | 4 cr (2h T + 3h P)
+   • INF312   | Base de Datos I                          | 4 cr (3h T + 2h P)
+   • INF318   | Programación Lógica y Funcional        | 4 cr (2h T + 3h P)
+   • INF319   | Lenguajes Formales                       | 4 cr (3h T + 2h P)
+   • MAT302   | Probabilidades y Estadística II         | 4 cr (3h T + 2h P)
+
+🔹 SEMESTRE 6 (5 materias | 20 cr | 13h T + 12h P):
+   • INF322   | Base de Datos II                         | 4 cr (2h T + 3h P)
+   • INF323   | Sistemas Operativos I                    | 4 cr (2h T + 3h P)
+   • INF329   | Compiladores                             | 4 cr (3h T + 2h P)
+   • INF342   | Sistemas de Información I               | 4 cr (3h T + 2h P)
+   • MAT329   | Investigación Operativa I               | 4 cr (3h T + 2h P)
+
+🔹 SEMESTRE 7 (5 materias | 20 cr | 14h T + 11h P):
+   • INF412   | Sistemas de Información II              | 4 cr (3h T + 2h P)
+   • INF413   | Sistemas Operativos II                   | 4 cr (2h T + 3h P)
+   • INF418   | Inteligencia Artificial                  | 4 cr (3h T + 2h P)
+   • INF433   | Redes I                                  | 4 cr (3h T + 2h P)
+   • MAT419   | Investigación Operativa II              | 4 cr (3h T + 2h P)
+
+🔹 SEMESTRE 8 (5 materias | 20 cr | 13h T + 12h P):
+   • ECO499   | Preparación y Evaluación de Proyectos  | 4 cr (3h T + 2h P)
+   • INF422   | Ingeniería de Software I                | 4 cr (3h T + 2h P)
+   • INF423   | Redes II                                 | 4 cr (2h T + 3h P)
+   • INF428   | Sistemas Expertos                        | 4 cr (3h T + 2h P)
+   • INF442   | Sistemas de Información Geográfica     | 4 cr (2h T + 3h P)
+
+🔹 SEMESTRE 9 (4 materias | 16 cr | 10h T + 11h P):
+   • INF511   | Taller de Grado I                        | 4 cr (2h T + 4h P)
+   • INF512   | Ingeniería de Software II               | 4 cr (3h T + 2h P)
+   • INF513   | Tecnología Web                          | 4 cr (2h T + 3h P)
+   • INF552   | Arquitectura del Software                | 4 cr (3h T + 2h P)
+
+🔹 SEMESTRE 10 (1 materias | 6 cr | 0h T + 6h P):
+   • GRL001   | Modalidad de Titulación Licenciatura    | 6 cr (0h T + 6h P)
+
+🔹 ELECTIVAS (8 materias | 31 cr | 21h T + 18h P):
+   • ELC101   | Modelación y Simulación de Sistemas    | 4 cr (3h T + 2h P)
+   • ELC102   | Programación Gráfica                   | 4 cr (2h T + 3h P)
+   • ELC103   | Tópicos Avanzados de Programación      | 4 cr (2h T + 3h P)
+   • ELC104   | Programación de Aplicaciones de Tiempo  | 4 cr (2h T + 3h P)
+   • ELC105   | Sistemas Distribuidos                    | 4 cr (3h T + 2h P)
+   • ELC106   | Interacción Hombre-Computador           | 3 cr (3h T + 1h P)
+   • ELC107   | Criptografía y Seguridad                | 4 cr (3h T + 2h P)
+   • ELC108   | Control y Automatización                | 4 cr (3h T + 2h P)
+
+─────────────────────────────────────────────────────────────────────────────────
+
+✅ TODAS LAS MATERIAS ESTÁN DISPONIBLES EN EL SISTEMA
+

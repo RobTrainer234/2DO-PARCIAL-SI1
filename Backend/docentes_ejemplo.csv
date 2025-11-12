@@ -1,0 +1,6 @@
+nombre,apellido,correo,ci,contraseña,teléfono,sexo,dirección,especialidad,fecha_contrato
+Juan,"Pérez García",juan.perez@ficct.test,12345678,Pass123!Docente,+591-77777777,M,"Calle Principal 123, La Paz","Ingeniería de Sistemas",2024-01-15
+María,"López Martínez",maria.lopez@ficct.test,87654321,Pass456!Docente,+591-77777776,F,"Avenida Secundaria 456, La Paz","Administración de Empresas",2024-02-20
+Carlos,"Rodríguez Sánchez",carlos.rodriguez@ficct.test,11223344,Pass789!Docente,+591-77777775,M,"Calle Tercera 789, La Paz",Contabilidad,2024-03-10
+Laura,"González Torres",laura.gonzalez@ficct.test,55667788,Pass101!Docente,+591-77777774,F,"Av. Central 1000, La Paz",Derecho,2024-01-05
+Roberto,"Fernández López",roberto.fernandez@ficct.test,99887766,Pass202!Docente,+591-77777773,M,"Calle Nueva 2000, La Paz",Medicina,2024-02-28
