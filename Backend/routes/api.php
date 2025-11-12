@@ -24,6 +24,7 @@ use App\Http\Controllers\Api\ExportarReportesController;
 use App\Http\Controllers\Api\DashboardIndicadoresController;
 use App\Http\Controllers\Api\AuditoriaController;
 use App\Http\Controllers\Api\CargaHorariaController;
+use App\Http\Controllers\Api\RegistroAsistenciaController;
 
 // Test endpoint
 Route::get('/test', function () {
@@ -189,6 +190,39 @@ Route::prefix('carga-horaria')->middleware('auth:sanctum')->group(function () {
     
     // Gestión de horarios disponibles
     Route::post('/{id}/horarios', [CargaHorariaController::class, 'agregarHorario']);  // Agregar horario
-    Route::put('/{id}/horarios/{idHorario}', [CargaHorariaController::class, 'actualizarHorario']);  // Actualizar horario
+    Route::post('/{id}/horarios/{idHorario}', [CargaHorariaController::class, 'actualizarHorario']);  // Actualizar horario
     Route::delete('/{id}/horarios/{idHorario}', [CargaHorariaController::class, 'eliminarHorario']);  // Eliminar horario
+});
+
+// CU13: Registro de Asistencia Docente
+Route::prefix('asistencia')->middleware('auth:sanctum')->group(function () {
+    // Registro manual
+    Route::post('/registrar-manual', [RegistroAsistenciaController::class, 'registrarManual']);
+    
+    // QR
+    Route::post('/generar-qr', [RegistroAsistenciaController::class, 'generarCodigoQR']);
+    Route::post('/registrar-qr', [RegistroAsistenciaController::class, 'registrarPorQR']);
+    
+    // Enlace único
+    Route::post('/generar-enlace', [RegistroAsistenciaController::class, 'generarEnlaceUnico']);
+    Route::post('/registrar-enlace/{enlace}', [RegistroAsistenciaController::class, 'registrarPorEnlace'])->withoutMiddleware('auth:sanctum');
+    
+    // Gestión de estados
+    Route::put('/{id}/cambiar-estado', [RegistroAsistenciaController::class, 'cambiarEstado']);
+    
+    // Evidencias
+    Route::post('/{id}/evidencia', [RegistroAsistenciaController::class, 'guardarEvidencia']);
+    
+    // Consultas
+    Route::get('/docente/{docenteId}', [RegistroAsistenciaController::class, 'obtenerAsistenciasDocente']);
+});
+
+// CU14: Validación de Asistencia
+Route::prefix('validacion-asistencia')->middleware('auth:sanctum')->group(function () {
+    Route::get('/pendientes', [ValidacionAsistenciaController::class, 'obtenerPendientes']);
+    Route::post('/{asistenciaId}/validar', [ValidacionAsistenciaController::class, 'validar']);
+    Route::post('/{asistenciaId}/rechazar', [ValidacionAsistenciaController::class, 'rechazar']);
+    Route::post('/{asistenciaId}/marcar-revisada', [ValidacionAsistenciaController::class, 'marcarRevisada']);
+    Route::get('/{asistenciaId}/historico', [ValidacionAsistenciaController::class, 'historicoValidaciones']);
+    Route::get('/resumen', [ValidacionAsistenciaController::class, 'resumenValidaciones']);
 });

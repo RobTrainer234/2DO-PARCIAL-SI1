@@ -2,100 +2,201 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Models\Asistencia;
-use App\Models\DocenteGrupoMateria;
+use App\Models\AsistenciaDocente;
+use App\Models\ValidacionAsistencia;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class ValidacionAsistenciaController extends Controller
 {
-    /**
-     * CU14: Validar registros de asistencia
-     * Obtiene la validación de asistencias por docente, grupo, materia y gestión
-     */
-    public function validarAsistencias(Request $request)
+    // CU14: Obtener asistencias para validar
+    public function obtenerPendientes(Request $request)
     {
-        $validated = $request->validate([
-            'id_asignacion' => 'required|integer|exists:DocenteGrupoMateria,id_asignacion',
-            'fecha_inicio' => 'sometimes|date',
-            'fecha_fin' => 'sometimes|date|after_or_equal:fecha_inicio'
-        ]);
+        $query = AsistenciaDocente::where('validada', false)
+            ->with(['docente', 'grupo', 'evidencias', 'validaciones']);
 
-        $query = Asistencia::where('id_asignacion', $validated['id_asignacion']);
-
-        if ($request->has('fecha_inicio')) {
-            $query->where('fecha', '>=', $validated['fecha_inicio']);
+        if ($request->has('fecha')) {
+            $query->where('fecha', $request->fecha);
         }
 
-        if ($request->has('fecha_fin')) {
-            $query->where('fecha', '<=', $validated['fecha_fin']);
+        if ($request->has('grupo_id')) {
+            $query->where('grupo_id', $request->grupo_id);
         }
 
-        $asistencias = $query->get();
-        $total = $asistencias->count();
-        $presentes = $asistencias->where('estado', 'PRESENTE')->count();
-        $ausentes = $asistencias->where('estado', 'AUSENTE')->count();
-        $atrasos = $asistencias->where('estado', 'ATRASO')->count();
-        $justificados = $asistencias->where('estado', 'JUSTIFICADO')->count();
+        if ($request->has('estado')) {
+            $query->where('estado', $request->estado);
+        }
 
-        $porcentaje_asistencia = $total > 0 ? ($presentes / $total) * 100 : 0;
+        $asistencias = $query->orderBy('fecha', 'desc')->paginate(20);
 
         return response()->json([
-            'id_asignacion' => $validated['id_asignacion'],
-            'total_registros' => $total,
-            'presentes' => $presentes,
-            'ausentes' => $ausentes,
-            'atrasos' => $atrasos,
-            'justificados' => $justificados,
-            'porcentaje_asistencia' => round($porcentaje_asistencia, 2),
-            'detalles' => $asistencias
+            'success' => true,
+            'data' => $asistencias
         ]);
     }
 
-    /**
-     * Validar asistencia por rango de fechas y agrupar por docente
-     */
-    public function validarAsistenciasPorDocente(Request $request)
+    // CU14: Validar asistencia
+    public function validar(Request $request, $asistenciaId)
     {
         $validated = $request->validate([
-            'cod_docente' => 'required|integer|exists:Docente,cod_docente',
-            'fecha_inicio' => 'required|date',
-            'fecha_fin' => 'required|date|after_or_equal:fecha_inicio'
+            'estado_validacion' => 'required|in:Aprobada,Rechazada,En revisión',
+            'observaciones_validacion' => 'nullable|string',
+            'falta_justificada' => 'nullable|boolean'
         ]);
 
-        // Obtener todas las asignaciones del docente
-        $asignaciones = DocenteGrupoMateria::where('cod_docente', $validated['cod_docente'])
-            ->with(['grupo', 'materia', 'gestion'])
-            ->get();
+        $asistencia = AsistenciaDocente::find($asistenciaId);
 
-        $resumen = [];
-        foreach ($asignaciones as $asignacion) {
-            $asistencias = Asistencia::where('id_asignacion', $asignacion->id_asignacion)
-                ->whereBetween('fecha', [$validated['fecha_inicio'], $validated['fecha_fin']])
-                ->get();
+        if (!$asistencia) {
+            return response()->json(['error' => 'Asistencia no encontrada'], 404);
+        }
 
-            $total = $asistencias->count();
-            $presentes = $asistencias->where('estado', 'PRESENTE')->count();
-            $ausentes = $asistencias->where('estado', 'AUSENTE')->count();
-            $porcentaje = $total > 0 ? ($presentes / $total) * 100 : 0;
+        // Crear/actualizar registro de validación
+        $validacion = ValidacionAsistencia::updateOrCreate(
+            ['asistencia_id' => $asistenciaId],
+            [
+                'coordinador_id' => auth()->id(),
+                'estado_validacion' => $validated['estado_validacion'],
+                'observaciones_validacion' => $validated['observaciones_validacion'],
+                'falta_justificada' => $validated['falta_justificada'] ?? false,
+                'fecha_validacion' => now()
+            ]
+        );
 
-            $resumen[] = [
-                'id_asignacion' => $asignacion->id_asignacion,
-                'grupo' => $asignacion->grupo->nombre,
-                'materia' => $asignacion->materia->sigla,
-                'gestion' => $asignacion->gestion->anio . ' - ' . $asignacion->gestion->periodo,
-                'total' => $total,
-                'presentes' => $presentes,
-                'ausentes' => $ausentes,
-                'porcentaje_asistencia' => round($porcentaje, 2)
-            ];
+        // Marcar asistencia como validada
+        $asistencia->update([
+            'validada' => true,
+            'validada_por' => auth()->id(),
+            'fecha_validacion' => now()
+        ]);
+
+        // Si falta justificada, cambiar estado
+        if ($validated['falta_justificada'] ?? false) {
+            $asistencia->update(['estado' => 'Falta justificada']);
         }
 
         return response()->json([
-            'cod_docente' => $validated['cod_docente'],
-            'fecha_inicio' => $validated['fecha_inicio'],
-            'fecha_fin' => $validated['fecha_fin'],
-            'asignaciones' => $resumen
+            'success' => true,
+            'message' => 'Asistencia validada exitosamente',
+            'data' => [
+                'asistencia' => $asistencia,
+                'validacion' => $validacion
+            ]
+        ]);
+    }
+
+    // CU14: Rechazar validación
+    public function rechazar(Request $request, $asistenciaId)
+    {
+        $validated = $request->validate([
+            'motivo_rechazo' => 'required|string'
+        ]);
+
+        $asistencia = AsistenciaDocente::find($asistenciaId);
+
+        if (!$asistencia) {
+            return response()->json(['error' => 'Asistencia no encontrada'], 404);
+        }
+
+        ValidacionAsistencia::updateOrCreate(
+            ['asistencia_id' => $asistenciaId],
+            [
+                'coordinador_id' => auth()->id(),
+                'estado_validacion' => 'Rechazada',
+                'observaciones_validacion' => $validated['motivo_rechazo'],
+                'fecha_validacion' => now()
+            ]
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Validación rechazada. Se notificará al docente.',
+            'data' => $asistencia
+        ]);
+    }
+
+    // CU14: Obtener histórico de validaciones
+    public function historicoValidaciones($asistenciaId)
+    {
+        $asistencia = AsistenciaDocente::find($asistenciaId);
+
+        if (!$asistencia) {
+            return response()->json(['error' => 'Asistencia no encontrada'], 404);
+        }
+
+        $validaciones = ValidacionAsistencia::where('asistencia_id', $asistenciaId)
+            ->with('coordinador:id,name')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'asistencia' => $asistencia,
+            'validaciones' => $validaciones
+        ]);
+    }
+
+    // CU14: Obtener resumen de validaciones por período
+    public function resumenValidaciones(Request $request)
+    {
+        $fechaInicio = $request->query('fecha_inicio');
+        $fechaFin = $request->query('fecha_fin');
+        $docenteId = $request->query('docente_id');
+
+        $query = ValidacionAsistencia::with(['asistencia', 'coordinador']);
+
+        if ($fechaInicio && $fechaFin) {
+            $query->whereBetween('fecha_validacion', [$fechaInicio, $fechaFin]);
+        }
+
+        if ($docenteId) {
+            $query->whereHas('asistencia', function ($q) use ($docenteId) {
+                $q->where('docente_id', $docenteId);
+            });
+        }
+
+        $validaciones = $query->get();
+
+        $resumen = [
+            'total_validaciones' => $validaciones->count(),
+            'aprobadas' => $validaciones->where('estado_validacion', 'Aprobada')->count(),
+            'rechazadas' => $validaciones->where('estado_validacion', 'Rechazada')->count(),
+            'en_revision' => $validaciones->where('estado_validacion', 'En revisión')->count(),
+            'faltas_justificadas' => $validaciones->where('falta_justificada', true)->count(),
+            'por_coordinador' => $validaciones->groupBy('coordinador_id')->map(function ($items) {
+                return [
+                    'coordinador' => $items->first()->coordinador->name ?? 'Desconocido',
+                    'total' => $items->count(),
+                    'aprobadas' => $items->where('estado_validacion', 'Aprobada')->count()
+                ];
+            })
+        ];
+
+        return response()->json([
+            'success' => true,
+            'resumen' => $resumen,
+            'validaciones' => $validaciones
+        ]);
+    }
+
+    // CU14: Marcar como revisada
+    public function marcarRevisada(Request $request, $asistenciaId)
+    {
+        $asistencia = AsistenciaDocente::find($asistenciaId);
+
+        if (!$asistencia) {
+            return response()->json(['error' => 'Asistencia no encontrada'], 404);
+        }
+
+        $asistencia->update([
+            'validada' => true,
+            'validada_por' => auth()->id(),
+            'fecha_validacion' => now()
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Marcada como revisada',
+            'data' => $asistencia
         ]);
     }
 }
